@@ -3,9 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Netflix Bangladesh - Watch TV Shows Online</title>
+  <title>Netflix - Watch TV Shows Online</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick.css"/>
+<!-- Add the slick-theme.css if you want default styling -->
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick-theme.css"/>
   <style>
     .hero-bg {
       background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)),
@@ -21,16 +23,12 @@ select option {
   color: white !important;
 }
 /* Perfect Netflix-style trending cards */
-.swiper-slide {
-  height: 420px !important;
-  width: 280px !important;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.swiper-slide{
+    padding: 10px;
 }
 
 .swiper-slide img {
-  height: 380px !important;
+  height: 195px !important;
   width: 100%;
   object-fit: cover;
   border-radius: 12px;
@@ -90,7 +88,7 @@ select option {
 <section class="py-20 px-6 bg-black">
   <h2 class="text-4xl md:text-6xl font-bold text-center mb-16 text-white">Trending Now</h2>
   
-  <div class="swiper mySwiper max-w-7xl mx-auto">
+  <div class="swiper mySwiper  mx-auto">
     <div class="swiper-wrapper">
 
       <!-- Movie 1 -->
@@ -131,33 +129,20 @@ select option {
   <!-- Footer -->
   <footer class="bg-black py-16 text-center text-gray-400 border-t border-gray-800">
     <p class="text-2xl mb-2">Built by Shamim • Day 3 of 90-Day MERN Challenge</p>
-    <p>Live Link: <a href="#" class="text-red-500 underline">My-Vercel-Link-Here</a></p>
+    <p>Live Link: <a href="https://shamim-netflix-clone.vercel.app/" class="text-red-500 underline">Shamim's-Vercel-Link-Here</a></p>
   </footer>
 
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
   <!-- Swiper JS -->
-  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick.min.js"></script>
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      new Swiper(".mySwiper", {
-        slidesPerView: 2,
-        spaceBetween: 20,
-        loop: true,
-        autoplay: {
-          delay: 2500,
-          disableOnInteraction: false,
-        },
-        pagination: {
-          el: ".swiper-pagination",
-          clickable: true,
-        },
-        breakpoints: {
-          640: { slidesPerView: 2 },
-          768: { slidesPerView: 3 },
-          1024: { slidesPerView: 4 },
-          1280: { slidesPerView: 5 }
-        }
-      });
-    });
+    $('.swiper-wrapper').slick({
+        slidesToShow: 4,
+        slidesToScroll: 1,
+        autoplay: true,
+        autoplaySpeed: 800,
+        centerPadding: '60px',
+        });
   </script>
 </body>
 </html>
