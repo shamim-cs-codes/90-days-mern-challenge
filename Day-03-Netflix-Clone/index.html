@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Netflix Bangladesh - Watch TV Shows Online</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+  <style>
+    .hero-bg {
+      background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)),
+                  url('assets/bg.jpg') center/cover no-repeat;
+      min-height: 100vh;
+    }
+    select {
+  background-color: rgba(0, 0, 0, 0.8) !important;
+  color: white !important;
+}
+select option {
+  background-color: #000 !important;
+  color: white !important;
+}
+/* Perfect Netflix-style trending cards */
+.swiper-slide {
+  height: 420px !important;
+  width: 280px !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.swiper-slide img {
+  height: 380px !important;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+  transition: transform 0.4s ease;
+}
+
+.swiper-slide img:hover {
+  transform: scale(1.08);
+}
+
+.swiper-slide p {
+  color: white;
+  font-weight: 600;
+  text-align: center;
+  padding: 0 8px;
+}
+  </style>
+</head>
+<body class="bg-black text-white">
+
+  <!-- Navbar -->
+  <nav class="fixed top-0 z-50 w-full bg-gradient-to-b from-black via-black/70 to-transparent">
+    <div class="flex items-center justify-between px-6 py-6 md:px-12">
+      <img src="assets/logo.svg" alt="Netflix" class="h-10 md:h-14">
+      <div class="flex gap-4 items-center">
+        <select class="bg-transparent border border-gray-400 rounded px-4 py-2 text-sm">
+          <option>English</option>
+          <option>বাংলা</option>
+        </select>
+        <button class="bg-red-600 hover:bg-red-700 px-6 py-2.5 rounded font-medium text-sm">Sign In</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero-bg flex items-center justify-center text-center px-6">
+    <div class="max-w-5xl">
+      <h1 class="text-5xl md:text-7xl font-black mb-6 leading-tight">
+        Unlimited movies, TV shows and more
+      </h1>
+      <p class="text-2xl md:text-4xl mb-6">Watch anywhere. Cancel anytime.</p>
+      <p class="text-lg md:text-xl mb-8 max-w-2xl mx-auto">
+        Ready to watch? Enter your email to create or restart your membership.
+      </p>
+      <div class="flex flex-col md:flex-row gap-4 justify-center max-w-3xl mx-auto">
+        <input type="email" placeholder="Email address" 
+               class="bg-black/70 border border-gray-500 rounded px-6 py-5 text-lg flex-1">
+        <button class="bg-red-600 hover:bg-red-700 text-2xl font-bold px-10 py-5 rounded flex items-center gap-3">
+          Get Started <span class="text-4xl">›</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+<!-- Trending Now -->
+<section class="py-20 px-6 bg-black">
+  <h2 class="text-4xl md:text-6xl font-bold text-center mb-16 text-white">Trending Now</h2>
+  
+  <div class="swiper mySwiper max-w-7xl mx-auto">
+    <div class="swiper-wrapper">
+
+      <!-- Movie 1 -->
+      <div class="swiper-slide flex flex-col items-center">
+        <img src="assets/movie1.jpg" alt="A Quiet Place Part II" class="rounded-lg w-full object-cover shadow-2xl mb-3">
+        <p class="text-white text-sm md:text-base font-semibold text-center mt-2">A Quiet Place Part II</p>
+      </div>
+
+      <!-- Movie 2 -->
+      <div class="swiper-slide flex flex-col items-center">
+        <img src="assets/movie2.jpg" alt="Split" class="rounded-lg w-full object-cover shadow-2xl mb-3">
+        <p class="text-white text-sm md:text-base font-semibold text-center mt-2">Split</p>
+      </div>
+
+      <!-- Movie 3 -->
+      <div class="swiper-slide flex flex-col items-center">
+        <img src="assets/movie3.jpg" alt="Viking Wolf" class="rounded-lg w-full object-cover shadow-2xl mb-3">
+        <p class="text-white text-sm md:text-base font-semibold text-center mt-2">Viking Wolf</p>
+      </div>
+
+      <!-- Movie 4 -->
+      <div class="swiper-slide flex flex-col items-center">
+        <img src="assets/movie4.jpg" alt="Attack on Titan" class="rounded-lg w-full object-cover shadow-2xl mb-3">
+        <p class="text-white text-sm md:text-base font-semibold text-center mt-2">Attack on Titan</p>
+      </div>
+
+      <!-- Movie 5 -->
+      <div class="swiper-slide flex flex-col items-center">
+        <img src="assets/movie5.jpg" alt="Indigo" class="rounded-lg w-full object-cover shadow-2xl mb-3">
+        <p class="text-white text-sm md:text-base font-semibold text-center mt-2">Indigo</p>
+      </div>
+
+    </div>
+    <div class="swiper-pagination mt-10"></div>
+  </div>
+</section>
+
+  <!-- Footer -->
+  <footer class="bg-black py-16 text-center text-gray-400 border-t border-gray-800">
+    <p class="text-2xl mb-2">Built by Shamim • Day 3 of 90-Day MERN Challenge</p>
+    <p>Live Link: <a href="#" class="text-red-500 underline">My-Vercel-Link-Here</a></p>
+  </footer>
+
+  <!-- Swiper JS -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      new Swiper(".mySwiper", {
+        slidesPerView: 2,
+        spaceBetween: 20,
+        loop: true,
+        autoplay: {
+          delay: 2500,
+          disableOnInteraction: false,
+        },
+        pagination: {
+          el: ".swiper-pagination",
+          clickable: true,
+        },
+        breakpoints: {
+          640: { slidesPerView: 2 },
+          768: { slidesPerView: 3 },
+          1024: { slidesPerView: 4 },
+          1280: { slidesPerView: 5 }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
