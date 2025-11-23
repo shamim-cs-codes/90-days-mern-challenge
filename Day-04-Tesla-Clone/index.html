@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tesla - Electric Cars, Solar & Clean Energy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <style>
+    .hero-bg{background: linear-gradient(to bottom, rgb(255 255 255 / 0%), rgb(255 255 255 / 0%)), url(assets/Home.jpg) center / cover no-repeat}
+    .dark-mode .hero-bg { background: linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0.9)), url('assets/Home.jpg') center/cover no-repeat; }
+    .dark-mode { background-color: #000 !important; color: white !important; }
+    nav.scrolled{
+        background-color: #dcdcdc7a;
+    }
+  </style>
+</head>
+<body class="bg-white text-black transition-all duration-500" x-data="{ dark: false }">
+
+  <!-- Navbar -->
+  <nav id="mainNavbar" class="fixed top-0 z-40 w-full bg-transparent">
+    <div class="flex justify-between items-center px-8 py-6">
+        <div>
+            <img src="assets/logo.svg" alt="Tesla" class="h-10">
+        </div>
+        <div class="hidden md:flex gap-10 text-sm font-medium">
+            <a href="#" class="hover:text-gray-600">Model S</a>
+            <a href="#" class="hover:text-gray-600">Model 3</a>
+            <a href="#" class="hover:text-gray-600">Model X</a>
+            <a href="#" class="hover:text-gray-600">Model Y</a>
+            <a href="#" class="hover:text-gray-600">Cybertruck</a>
+            <a href="#" class="hover:text-gray-600">Semi</a>
+        </div>
+        <!-- Dark Mode Toggle -->
+        <div>
+            <button @click="dark = !dark; document.body.classList.toggle('dark-mode')" 
+                    class="bg-gray-200 dark:bg-gray-800 p-3 rounded-full shadow-lg">
+            <span x-show="!dark">🌙</span>
+            <span x-show="dark">☀️</span>
+            </button>
+        </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero-bg min-h-screen flex flex-col justify-between text-center pt-32 pb-20">
+    <div></div>
+    <div data-aos="fade-up">
+      <h1 class="text-6xl md:text-8xl font-black mb-6">Cybertruck</h1>
+      <p class="text-2xl md:text-4xl mb-8">Better utility than a truck with faster acceleration than a sports car</p>
+      <div class="flex gap-8 justify-center">
+        <button class="bg-white/20 backdrop-blur border border-white/30 px-16 py-4 rounded-full text-xl font-bold hover:bg-white/30 transition">Order Now</button>
+        <button class="bg-transparent border border-white px-16 py-4 rounded-full text-xl font-bold hover:bg-white/20 transition">Learn More</button>
+      </div>
+    </div>
+    <div class="text-center pb-10">
+      <p class="text-sm text-white opacity-80">Starting at $79,990</p>
+    </div>
+  </header>
+
+  <!-- Models Grid -->
+  <section class="py-32 px-8" data-aos="fade-up">
+    <h2 class="text-5xl md:text-7xl font-bold text-center mb-20">Choose Your Tesla</h2>
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-10 max-w-7xl mx-auto">
+      <div class="text-center" data-aos="zoom-in" data-aos-delay="100">
+        <img src="assets/Semi.jpg" class="rounded-2xl shadow-2xl mb-6">
+        <h3 class="text-3xl font-bold">Semi</h3>
+        <p class="text-gray-600">From $89,990</p>
+      </div>
+        <div class="text-center" data-aos="zoom-in" data-aos-delay="200">
+        <img src="assets/Cybertruck.jpg" class="rounded-2xl shadow-2xl mb-6">
+        <h3 class="text-3xl font-bold">Cybertruck</h3>
+        <p class="text-gray-600">From $44,990</p>
+      </div>
+        <div class="text-center" data-aos="zoom-in" data-aos-delay="200">
+        <img src="assets/ModelS.jpg" class="rounded-2xl shadow-2xl mb-6">
+        <h3 class="text-3xl font-bold">Model S</h3>
+        <p class="text-gray-600">From $47,990</p>
+      </div>
+        <div class="text-center" data-aos="zoom-in" data-aos-delay="200">
+        <img src="assets/Model3.jpg" class="rounded-2xl shadow-2xl mb-6">
+        <h3 class="text-3xl font-bold">Model 3</h3>
+        <p class="text-gray-600">From $41,990</p>
+      </div>
+      <div class="text-center" data-aos="zoom-in" data-aos-delay="300">
+        <img src="assets/ModelX.jpg" class="rounded-2xl shadow-2xl mb-6">
+        <h3 class="text-3xl font-bold">Model X</h3>
+        <p class="text-gray-600">From $99,990</p>
+      </div>
+      <div class="text-center" data-aos="zoom-in" data-aos-delay="400">
+        <img src="assets/ModelYn.jpg" class="rounded-2xl shadow-2xl mb-6">
+        <h3 class="text-3xl font-bold">Model Y</h3>
+        <p class="text-gray-600">From $48,990</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Robotaxi Section -->
+  <section class="min-h-screen pt-12 bg-black text-white flex items-center justify-center" data-aos="fade">
+    <div class="text-center max-w-5xl px-8">
+      <img src="assets/robotaxi.jpg" class="rounded-3xl shadow-2xl mb-12 mx-auto max-w-4xl">
+      <h2 class="text-6xl md:text-8xl font-black mb-8">Robotaxi</h2>
+      <p class="text-2xl md:text-4xl mb-10">The future of transportation is here</p>
+      <button class="bg-white text-black px-20 py-5 rounded-full text-xl font-bold hover:bg-gray-200 transition">Reserve Now</button>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-black text-white py-16 text-center">
+    <p class="text-2xl mb-4">Built by Shamim • Day 4 of 90-Day MERN Challenge</p>
+    <p>Tesla 2025 Clone – Dark Mode + Animations + Responsive</p>
+  </footer>
+
+  <script>
+    AOS.init({ duration: 1200 });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const navbar = document.getElementById('mainNavbar');
+        const scrollThreshold = 50; // Adjust this value as needed
+
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > scrollThreshold) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+    });
+  </script>
+</body>
+</html>
