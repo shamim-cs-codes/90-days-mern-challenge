@@ -10,5 +10,7 @@
 - Auto-playing carousel with 5 trending shows
 - Hero section with gradient overlay
 
+## Screenshot
+![Netflix Clone Screenshot](./screenshots/shamim-netflix-clone-vercel-app-2025-11-23-00_17_41.jpg)
 
 Next → Day 4: Tesla Website Clone (2025 Cybertruck page)
