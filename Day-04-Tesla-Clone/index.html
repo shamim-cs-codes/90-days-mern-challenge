@@ -9,13 +9,31 @@
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <style>
-    .hero-bg{background: linear-gradient(to bottom, rgb(255 255 255 / 0%), rgb(255 255 255 / 0%)), url(assets/Home.jpg) center / cover no-repeat}
-    .dark-mode .hero-bg { background: linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0.9)), url('assets/Home.jpg') center/cover no-repeat; }
-    .dark-mode { background-color: #000 !important; color: white !important; }
-    nav.scrolled{
-        background-color: #dcdcdc7a;
-    }
-  </style>
+  /* Hero background - works in both light & dark mode */
+  .hero-bg {
+    background: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.9)), 
+                url('assets/Home.jpg') center/cover no-repeat;
+    min-height: 100vh;
+  }
+  .dark-mode .hero-bg {
+    background: linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(0,0,0,0.95)), 
+                url('assets/Home.jpg') center/cover no-repeat;
+  }
+
+  /* Navbar scroll effect */
+  nav.scrolled {
+    background-color: rgba(220, 220, 220, 0.8) !important;
+    backdrop-filter: blur(10px);
+  }
+  .dark-mode nav.scrolled {
+    background-color: rgba(0, 0, 0, 0.8) !important;
+  }
+
+  .dark-mode { 
+    background-color: #000 !important; 
+    color: white !important; 
+  }
+</style>
 </head>
 <body class="bg-white text-black transition-all duration-500" x-data="{ dark: false }">
 
@@ -23,7 +41,7 @@
   <nav id="mainNavbar" class="fixed top-0 z-40 w-full bg-transparent">
     <div class="flex justify-between items-center px-8 py-6">
         <div>
-            <img src="assets/logo.svg" alt="Tesla" class="h-10">
+            <img src="assets/Teslalogo.svg" alt="Tesla" class="h-10">
         </div>
         <div class="hidden md:flex gap-10 text-sm font-medium">
             <a href="#" class="hover:text-gray-600">Model S</a>
@@ -45,20 +63,20 @@
   </nav>
 
   <!-- Hero -->
-  <header class="hero-bg min-h-screen flex flex-col justify-between text-center pt-32 pb-20">
-    <div></div>
-    <div data-aos="fade-up">
-      <h1 class="text-6xl md:text-8xl font-black mb-6">Cybertruck</h1>
-      <p class="text-2xl md:text-4xl mb-8">Better utility than a truck with faster acceleration than a sports car</p>
-      <div class="flex gap-8 justify-center">
-        <button class="bg-white/20 backdrop-blur border border-white/30 px-16 py-4 rounded-full text-xl font-bold hover:bg-white/30 transition">Order Now</button>
-        <button class="bg-transparent border border-white px-16 py-4 rounded-full text-xl font-bold hover:bg-white/20 transition">Learn More</button>
-      </div>
+ <header class="hero-bg min-h-screen flex flex-col justify-between text-center pt-32 pb-20 text-white">
+  <div></div>
+  <div data-aos="fade-up">
+    <h1 class="text-6xl md:text-8xl font-black mb-6 drop-shadow-2xl">Cybertruck</h1>
+    <p class="text-2xl md:text-4xl mb-8 drop-shadow-lg">Better utility than a truck with faster acceleration than a sports car</p>
+    <div class="flex gap-8 justify-center">
+      <button class="bg-white/20 backdrop-blur border border-white/30 px-16 py-4 rounded-full text-xl font-bold hover:bg-white/30 transition">Order Now</button>
+      <button class="bg-transparent border border-white px-16 py-4 rounded-full text-xl font-bold hover:bg-white/20 transition">Learn More</button>
     </div>
-    <div class="text-center pb-10">
-      <p class="text-sm text-white opacity-80">Starting at $79,990</p>
-    </div>
-  </header>
+  </div>
+  <div class="text-center pb-10">
+    <p class="text-sm opacity-90 drop-shadow">Starting at $79,990</p>
+  </div>
+</header>
 
   <!-- Models Grid -->
   <section class="py-32 px-8" data-aos="fade-up">
