@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Spotify Clone • Day 05</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .track-hover:hover { background-color: rgba(255,255,255,0.1); }
+    .play-btn { transition: all 0.3s; }
+    .play-btn:hover { transform: scale(1.1); }
+  </style>
+</head>
+<body class="h-full bg-black text-white">
+
+  <!-- Sidebar -->
+  <div class="fixed inset-y-0 left-0 w-64 bg-black border-r border-gray-900 z-50">
+    <div class="p-6">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/2/26/Spotify_logo_with_text.svg" alt="Spotify" class="h-10">
+    </div>
+    <nav class="px-4 space-y-2">
+      <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-lg bg-green-500 text-black font-bold">
+        <i class="fas fa-home"></i> Home
+      </a>
+      <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-gray-900 transition">
+        <i class="fas fa-search"></i> Search
+      </a>
+      <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-gray-900 transition">
+        <i class="fas fa-book"></i> Your Library
+      </a>
+    </nav>
+  </div>
+
+  <!-- Main Content -->
+  <div class="ml-64 min-h-screen bg-gradient-to-b from-green-900 via-black to-black pb-32">
+    <div class="p-8">
+      <h1 class="text-5xl font-black mb-8">Good Evening, Shamim</h1>
+
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6" id="playlist">
+        <!-- Songs injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Player Bar -->
+  <div class="fixed bottom-0 left-0 right-0 bg-black border-t border-gray-900 p-4 flex items-center justify-between z-50">
+    <div class="flex items-center gap-4 w-80">
+      <img id="current-cover" src="" class="w-14 h-14 rounded">
+      <div>
+        <h4 id="current-title" class="font-bold">Select a song</h4>
+        <p id="current-artist" class="text-sm text-gray-400">Artist</p>
+      </div>
+      <button id="like-btn" class="ml-4 text-gray-400 hover:text-white">
+        <i class="far fa-heart"></i>
+      </button>
+    </div>
+
+    <div class="flex flex-col items-center gap-2 flex spos-1 max-w-2xl">
+      <div class="flex items-center gap-8">
+        <button id="shuffle-btn" class="text-gray-400 hover:text-white"><i class="fas fa-random"></i></button>
+        <button id="prev-btn"><i class="fas fa-step-backward text-2xl"></i></button>
+        <button id="play-pause-btn" class="bg-white text-black w-12 h-12 rounded-full flex items-center justify-center play-btn">
+          <i class="fas fa-play ml-1"></i>
+        </button>
+        <button id="next-btn"><i class="fas fa-step-forward text-2xl"></i></button>
+        <button id="repeat-btn" class="text-gray-400 hover:text-white"><i class="fas fa-redo"></i></button>
+      </div>
+      <div class="flex items-center gap-4 w-full">
+        <span id="time-current" class="text-xs">0:00</span>
+        <input type="range" id="seek-slider" min="0" value="0" class="flex-1 h-1 bg-gray-600 rounded-lg">
+        <span id="time-total" class="text-xs">0:00</span>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-3 w-40">
+      <i class="fas fa-volume-up"></i>
+      <input type="range" id="volume-slider" min="0" max="100" value="80" class="w-24 h-1">
+    </div>
+  </div>
+
+  <!-- CLEAN ARCHITECTURE IN ONE FILE (Works on Live Server) -->
+  <script>
+    // === ENTITY ===
+    class Song {
+      constructor(id, title, artist, cover, src) {
+        this.id = id;
+        this.title = title;
+        this.artist = artist;
+        this.cover = cover;
+        this.src = src;
+      }
+    }
+
+    // === INFRASTRUCTURE (Audio) ===
+    class AudioPlayer {
+      constructor() {
+        this.sound = null;
+        this.onTimeUpdate = null;
+        this.onEnd = null;
+      }
+      load(src) {
+        if (this.sound) this.sound.unload();
+        this.sound = new Howl({
+          src: [src],
+          html5: true,
+          volume: 0.8,
+          onend: () => this.onEnd?.(),
+          onplay: () => this.onTimeUpdate?.(),
+          onload: () => this.onTimeUpdate?.()
+        });
+      }
+      play() { this.sound?.play(); }
+      pause() { this.sound?.pause(); }
+      seek(time) { this.sound?.seek(time); }
+      setVolume(v) { this.sound?.volume(v); }
+      get duration() { return this.sound?.duration() || 0; }
+      get currentTime() { return this.sound?.seek() || 0; }
+      get playing() { return this.sound?.playing() || false; }
+    }
+
+    // === USE CASE ===
+    class PlayerUseCase {
+      constructor(audioPlayer) {
+        this.audio = audioPlayer;
+        this.playlist = [];
+        this.currentIndex = 0;
+        this.isLiked = false;
+        this.audio.onEnd = () => this.next();
+        this.audio.onTimeUpdate = () => this.updateProgress();
+      }
+      setPlaylist(songs) { this.playlist = songs; }
+      play(index) {
+        this.currentIndex = index;
+        this.audio.load(this.playlist[index].src);
+        this.audio.play();
+        this.render();
+      }
+      toggle() { this.audio.playing ? this.audio.pause() : this.audio.play(); this.render(); }
+      next() { this.currentIndex = (this.currentIndex + 1) % this.playlist.length; this.play(this.currentIndex); }
+      prev() { this.currentIndex = (this.currentIndex - 1 + this.playlist.length) % this.playlist.length; this.play(this.currentIndex); }
+      seek(time) { this.audio.seek(time); }
+      setVolume(v) { this.audio.setVolume(v / 100); }
+      toggleLike() { this.isLiked = !this.isLiked; document.querySelector('#like-btn i').className = this.isLiked ? 'fas fa-heart text-green-500' : 'far fa-heart'; }
+      updateProgress() {
+        const current = this.audio.currentTime;
+        const duration = this.audio.duration;
+        document.getElementById('seek-slider').value = current;
+        document.getElementById('seek-slider').max = duration;
+        document.getElementById('time-current').textContent = this.format(current);
+        document.getElementById('time-total').textContent = this.format(duration);
+      }
+      format(secs) {
+        if (!secs) return "0:00";
+        const m = Math.floor(secs / 60);
+        const s = Math.floor(secs % 60);
+        return `${m}:${s.toString().padStart(2, '0')}`;
+      }
+      render() {
+        const song = this.playlist[this.currentIndex];
+        document.getElementById('current-title').textContent = song.title;
+        document.getElementById('current-artist').textContent = song.artist;
+        document.getElementById('current-cover').src = song.cover;
+        document.querySelector('#play-pause-btn i').className = this.audio.playing ? 'fas fa-pause' : 'fas fa-play ml-1';
+      }
+    }
+
+    // === INIT ===
+    document.addEventListener('DOMContentLoaded', () => {
+      const playlist = [
+        new Song(1, "Blinding Lights", "The Weeknd", "assets/cover1.jpg", "assets/songs/song1.mp3"),
+        new Song(2, "Levitating", "Dua Lipa", "assets/cover2.jpg", "assets/songs/song2.mp3"),
+        new Song(3, "Shape of You", "Ed Sheeran", "assets/cover3.jpg", "assets/songs/song3.mp3"),
+        new Song(4, "Bad Guy", "Billie Eilish", "assets/cover4.jpg", "assets/songs/song4.mp3"),
+        new Song(5, "Uptown Funk", "Mark Ronson", "assets/cover5.jpg", "assets/songs/song5.mp3")
+      ];
+
+      const audioPlayer = new AudioPlayer();
+      const player = new PlayerUseCase(audioPlayer);
+      player.setPlaylist(playlist);
+
+      // Render playlist
+      const container = document.getElementById('playlist');
+      playlist.forEach((song, i) => {
+        const div = document.createElement('div');
+        div.className = "bg-gray-900/80 backdrop-blur rounded-lg overflow-hidden cursor-pointer group track-hover";
+        div.innerHTML = `
+          <div class="relative">
+            <img src="${song.cover}" class="w-full aspect-square object-cover">
+            <button class="absolute bottom-4 right-4 bg-green-500 w-12 h-12 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition play-btn">
+              <i class="fas fa-play text-black text-xl ml-1"></i>
+            </button>
+          </div>
+          <div class="p-4">
+            <h3 class="font-bold truncate">${song.title}</h3>
+            <p class="text-gray-400 text-sm truncate">${song.artist}</p>
+          </div>
+        `;
+        div.addEventListener('click', () => player.play(i));
+        container.appendChild(div);
+      });
+
+      // Bind controls
+      document.getElementById('play-pause-btn').onclick = () => player.toggle();
+      document.getElementById('next-btn').onclick = () => player.next();
+      document.getElementById('prev-btn').onclick = () => player.prev();
+      document.getElementById('seek-slider').oninput = (e) => player.seek(e.target.value);
+      document.getElementById('volume-slider').oninput = (e) => player.setVolume(e.target.value);
+      document.getElementById('like-btn').onclick = () => player.toggleLike();
+
+      // Update progress
+      setInterval(() => player.updateProgress(), 500);
+    });
+  </script>
+</body>
+</html>
