@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WhatsApp Web • Shamim</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .msg-in { background-color: #dcf8c6; align-self: flex-start; }
+    .msg-out { background-color: #ffffff; align-self: flex-end; }
+    .typing { font-style: italic; color: #667781; }
+  </style>
+</head>
+<body class="h-full bg-gray-100" x-data="whatsapp()">
+
+  <div class="flex h-screen">
+
+    <!-- Sidebar -->
+    <div class="w-96 bg-gray-800 text-white flex flex-col">
+      <!-- Header -->
+      <div class="bg-gray-900 p-4 flex items-center justify-between">
+        <img src="assets/shamim.jpg" class="w-12 h-12 rounded-full">
+        <div class="flex gap-6 text-xl">
+          <i class="fas fa-users cursor-pointer hover:text-gray-300"></i>
+          <i class="fas fa-comment-dots cursor-pointer hover:text-gray-300"></i>
+          <i class="fas fa-ellipsis-v cursor-pointer hover:text-gray-300"></i>
+        </div>
+      </div>
+
+      <!-- Search -->
+      <div class="p-3">
+        <div class="bg-gray-700 rounded-lg flex items-center gap-3 px-4 py-3">
+          <i class="fas fa-search text-gray-400"></i>
+          <input type="text" placeholder="Search or start new chat" class="bg-transparent outline-none flex-1 text-sm">
+        </div>
+      </div>
+
+      <!-- Chat List -->
+      <div class="flex-1 overflow-y-auto" id="chat-list">
+        <template x-for="chat in chats" :key="chat.id">
+          <div @click="selectChat(chat.id)" 
+               class="flex items-center gap-4 p-4 hover:bg-gray-700 cursor-pointer transition"
+               :class="{ 'bg-gray-700': selectedChat?.id === chat.id }">
+            <img :src="chat.avatar" class="w-14 h-14 rounded-full">
+            <div class="flex-1">
+              <div class="flex justify-between">
+                <h3 class="font-semibold" x-text="chat.name"></h3>
+                <span class="text-xs text-gray-400" x-text="chat.lastTime"></span>
+              </div>
+              <p class="text-sm text-gray-400 truncate" x-text="chat.lastMsg"></p>
+            </div>
+            <div x-show="chat.unread > 0" class="bg-green-500 text-xs rounded-full w-6 h-6 flex items-center justify-center">
+              <span x-text="chat.unread"></span>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    <!-- Chat Area -->
+    <div class="flex-1 flex flex-col !bg-[#FCF5EB]" x-show="selectedChat">
+      <!-- Chat Header -->
+      <div class="bg-gray-700 text-white p-4 flex items-center gap-4">
+        <button @click="selectedChat = null" class="md:hidden">
+          <i class="fas fa-arrow-left text-xl"></i>
+        </button>
+        <img :src="selectedChat?.avatar" class="w-12 h-12 rounded-full">
+        <div>
+          <h2 class="font-semibold" x-text="selectedChat?.name"></h2>
+          <p class="text-xs" x-text="selectedChat?.online ? 'Online' : 'Last seen ' + selectedChat?.lastSeen"></p>
+        </div>
+        <div class="ml-auto flex gap-6 text-xl">
+          <i class="fas fa-video cursor-pointer"></i>
+          <i class="fas fa-phone cursor-pointer"></i>
+          <i class="fas fa-ellipsis-v cursor-pointer"></i>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      <div class="flex-1 overflow-y-auto p-6 space-y-4 bg-[url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png')] bg-cover">
+        <template x-for="msg in selectedChat?.messages" :key="msg.id">
+          <div :class="msg.type === 'in' ? 'msg-in' : 'msg-out'"
+               class="max-w-xs lg:max-w-md px-4 py-3 rounded-2xl shadow relative">
+            <p x-text="msg.text"></p>
+            <span class="text-xs text-gray-500 absolute bottom-1 right-2 flex items-center gap-1">
+              <span x-text="msg.time"></span>
+              <i x-show="msg.type === 'out'" 
+                 :class="msg.delivered ? 'fas fa-check-double text-blue-500' : 'fas fa-check'"></i>
+            </span>
+          </div>
+        </template>
+        <div x-show="typing" class="msg-in max-w-xs px-4 py-3 rounded-2xl typing">
+          <i>typing...</i>
+        </div>
+      </div>
+
+      <!-- Input -->
+      <div class="bg-gray-200 p-4 flex items-center gap-4">
+        <i class="fas fa-smile text-2xl text-gray-500 cursor-pointer"></i>
+        <i class="fas fa-paperclip text-2xl text-gray-500 cursor-pointer"></i>
+        <input type="text" x-model="newMessage" @keyup.enter="sendMessage()"
+               placeholder="Type a message" class="flex-1 bg-white rounded-full px-6 py-3 outline-none">
+        <button @click="sendMessage()" class="text-2xl">
+          <i class="fas fa-microphone text-gray-500"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- No Chat Selected (Mobile) -->
+    <div class="flex-1 flex items-center justify-center !bg-[#FCF5EB]" x-show="!selectedChat">
+      <div class="text-center">
+        <img src="assets/profile.jpg" class="w-96 opacity-50">
+        <h1 class="text-4xl font-light text-gray-600 mt-8">WhatsApp Web</h1>
+        <p class="text-gray-500 mt-4">Click a chat to start messaging</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function whatsapp() {
+      return {
+        chats: [
+          { id: 1, name: "Mom", avatar: "assets/status1.jpg", online: true, lastSeen: "", lastMsg: "Baba Kothay tumi?", lastTime: "12:45", unread: 2 },
+          { id: 2, name: "Best Friend", avatar: "assets/status2.jpg", online: false, lastSeen: "2 hours ago", lastMsg: "Ber hobi?", lastTime: "11:30", unread: 0 },
+          { id: 3, name: "Project Group", avatar: "assets/status3.jpg", online: true, lastSeen: "", lastMsg: "Shamim: Update ki", lastTime: "10:15", unread: 7 },
+          { id: 4, name: "Placement Cell", avatar: "assets/status4.jpg", online: false, lastSeen: "yesterday", lastMsg: "New opening at Arjoo", lastTime: "Yesterday", unread: 1 },
+          { id: 5, name: "GF", avatar: "assets/status5.jpg", online: true, lastSeen: "", lastMsg: "Ki koro", lastTime: "Now", unread: 0 }
+        ],
+        selectedChat: null,
+        newMessage: '',
+        typing: false,
+
+        selectChat(id) {
+          this.selectedChat = this.chats.find(c => c.id === id);
+          this.selectedChat.messages = this.selectedChat.messages || [
+            { id: 1, type: 'in', text: 'Hi Shamim!', time: '12:30', delivered: true },
+            { id: 2, type: 'out', text: 'Hello!', time: '12:31', delivered: true },
+            { id: 3, type: 'in', text: 'Ki koro?', time: '12:32', delivered: true }
+          ];
+          // Mark as read
+          this.selectedChat.unread = 0;
+        },
+
+        sendMessage() {
+          if (!this.newMessage.trim() || !this.selectedChat) return;
+
+          this.selectedChat.messages.push({
+            id: Date.now(),
+            type: 'out',
+            text: this.newMessage,
+            time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+            delivered: false
+          });
+
+          this.newMessage = '';
+          
+          // Simulate reply
+          this.typing = true;
+          setTimeout(() => {
+            this.typing = false;
+            this.selectedChat.messages.push({
+              id: Date.now(),
+              type: 'in',
+              text: this.getRandomReply(),
+              time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+              delivered: true
+            });
+          }, 1500 + Math.random() * 2000);
+        },
+
+        getRandomReply() {
+          const replies = ["Na bhai", "Thik ache", "Haha", "Love you too", "Dekha hobe", "Done", "Thanks bro"];
+          return replies[Math.floor(Math.random() * replies.length)];
+        }
+      }
+    }
+  </script>
+</body>
+</html>
