@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asionix| Future-Proofing Your Business</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Lucide Icons for vector icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Set up the Inter font and a smooth scrolling effect */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+            background-color: #0d1117; /* Deep Charcoal/Navy Background */
+            overflow-x: hidden; /* Prevent horizontal scroll due to animations */
+        }
+
+        /* Custom scrollbar styling for a darker aesthetic */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+        }
+
+        /* --- Dynamic Background Glow Animation (Similar to Pathways) --- */
+        #background-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -10; /* Keep it behind all content */
+            opacity: 0.3; /* Subtle glow */
+            filter: blur(80px); /* Soften the edges significantly */
+            /* Use a very long animation cycle for a smooth, unnoticeable loop */
+            animation: backgroundShift 30s ease-in-out infinite alternate;
+        }
+
+        @keyframes backgroundShift {
+            0% {
+                /* Two radial gradients that move and shift color slightly */
+                background: radial-gradient(circle at 10% 50%, #4f46e5, transparent 50%),
+                            radial-gradient(circle at 80% 90%, #6366f1, transparent 50%);
+            }
+            50% {
+                background: radial-gradient(circle at 90% 10%, #4f46e5, transparent 50%),
+                            radial-gradient(circle at 20% 40%, #6366f1, transparent 50%);
+            }
+            100% {
+                background: radial-gradient(circle at 50% 70%, #4f46e5, transparent 50%),
+                            radial-gradient(circle at 30% 10%, #6366f1, transparent 50%);
+            }
+        }
+
+        /* --- Mouse Trail Styling --- */
+        #mouse-trail {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            background-color: #6366f1; /* Indigo color */
+            border-radius: 50%;
+            pointer-events: none; /* Allows clicks through the trail */
+            transform: translate(-50%, -50%); /* Center the element on the cursor position */
+            z-index: 9999;
+            opacity: 0; /* Start invisible */
+            filter: blur(10px);
+            transition: width 0.3s ease, height 0.3s ease, opacity 0.5s ease;
+            will-change: transform, width, height, opacity; /* Optimization */
+        }
+
+        /* --- Custom Animation Classes (AOS) --- */
+        .animate-on-scroll {
+            /* Initial state: invisible and slightly pushed down */
+            opacity: 0;
+            transform: translateY(1.5rem); /* 24px */
+            transition: opacity 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                        transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition-delay: 0.1s; /* Slight delay for staggered effect */
+        }
+
+        .animate-on-scroll.is-visible {
+            /* Final state: fully visible and in place */
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Fix for the fixed navigation bar */
+        main section {
+            padding-top: 5rem; /* Space for the fixed header */
+        }
+    </style>
+</head>
+<body class="text-gray-100 bg-gray-900">
+
+    <!-- Dynamic Background Glow Element (FIXED) -->
+    <div id="background-glow"></div>
+
+    <!-- Mouse Trail Element (FIXED) -->
+    <div id="mouse-trail"></div>
+
+    <!-- Fixed Navigation Bar -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-gray-900/95 backdrop-blur-md shadow-lg border-b border-indigo-500/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo/Brand -->
+                <a href="#hero" class="text-2xl font-bold tracking-tight text-white hover:text-indigo-400 transition duration-300">
+                    Asionix<span class="text-indigo-500"></span>
+                </a>
+                <!-- Navigation Links -->
+                <div class="hidden md:flex space-x-8">
+                    <a href="#about" class="text-sm font-medium hover:text-indigo-400 transition duration-300">About</a>
+                    <a href="#team" class="text-sm font-medium hover:text-indigo-400 transition duration-300">Team</a>
+                    <a href="#services" class="text-sm font-medium hover:text-indigo-400 transition duration-300">Services</a>
+                    <a href="#portfolio" class="text-sm font-medium hover:text-indigo-400 transition duration-300">Work</a>
+                    <a href="#contact" class="px-4 py-2 text-sm font-semibold rounded-lg bg-indigo-500 hover:bg-indigo-600 transition duration-300 shadow-lg">Contact Us</a>
+                </div>
+                <!-- Mobile Menu Button (Hamburger) -->
+                <button id="mobile-menu-button" class="md:hidden p-2 rounded-md text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
+                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Menu (Hidden by default) -->
+        <div id="mobile-menu" class="hidden md:hidden bg-gray-800 border-t border-indigo-500/30">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#about" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition duration-300">About</a>
+                <a href="#team" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition duration-300">Team</a>
+                <a href="#services" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition duration-300">Services</a>
+                <a href="#portfolio" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition duration-300">Work</a>
+                <a href="#contact" class="block px-3 py-2 rounded-md text-base font-medium bg-indigo-500 hover:bg-indigo-600 text-white transition duration-300">Contact Us</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <!-- 1. Hero Section -->
+        <section id="hero" class="min-h-screen flex items-center justify-center text-center pt-20">
+            <div class="max-w-4xl mx-auto px-6 space-y-8 animate-on-scroll">
+                <h1 class="text-6xl sm:text-7xl lg:text-8xl font-extrabold tracking-tighter leading-none bg-clip-text text-transparent bg-gradient-to-r from-gray-50 to-indigo-300">
+                    Future-Proof Your Business.
+                </h1>
+                <p class="text-xl sm:text-2xl text-gray-300 max-w-2xl mx-auto">
+                    We engineer custom software, mobile apps, and AI solutions that drive innovation and scalable growth.
+                </p>
+                <a href="#portfolio" class="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-xl shadow-2xl text-white bg-indigo-600 hover:bg-indigo-700 transition duration-300 transform hover:scale-[1.02] focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-50">
+                    View Our Work
+                    <span data-lucide="arrow-right" class="w-5 h-5 ml-2"></span>
+                </a>
+            </div>
+        </section>
+
+        <!-- 2. About Us Section -->
+        <section id="about" class="min-h-screen flex items-center justify-center pt-20 border-t border-gray-800/50">
+            <div class="max-w-7xl mx-auto px-6 py-16 lg:py-24">
+                <div class="text-center mb-16 animate-on-scroll">
+                    <span class="text-indigo-500 font-semibold uppercase tracking-wider text-sm">Our Philosophy</span>
+                    <h2 class="text-4xl sm:text-5xl font-bold mt-2">Driven by Excellence.</h2>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div class="space-y-6 text-lg text-gray-300 animate-on-scroll">
+                        <p>At Asionix, we believe the best software is built on strong partnerships. We are more than just developers; we are dedicated strategic allies committed to unlocking your digital potential.</p>
+                        <p>Our process is defined by transparency and agility, ensuring every solution we deliver is not only robust and high-performing but perfectly aligned with your business objectives and user needs.</p>
+                    </div>
+
+                    <div class="space-y-8 animate-on-scroll">
+                        <h3 class="text-2xl font-semibold text-white mb-4">Our Core Values</h3>
+                        <!-- Value Card 1 -->
+                        <div class="flex items-start space-x-4 p-4 rounded-xl bg-gray-800/50 border border-gray-700 hover:border-indigo-500 transition duration-300">
+                            <span data-lucide="zap" class="w-8 h-8 text-indigo-400 flex-shrink-0"></span>
+                            <div>
+                                <h4 class="text-xl font-semibold text-white">Precision Engineering</h4>
+                                <p class="text-sm text-gray-400">Code quality is paramount. We build scalable, maintainable, and highly optimized architectures.</p>
+                            </div>
+                        </div>
+                        <!-- Value Card 2 -->
+                        <div class="flex items-start space-x-4 p-4 rounded-xl bg-gray-800/50 border border-gray-700 hover:border-indigo-500 transition duration-300">
+                            <span data-lucide="users" class="w-8 h-8 text-indigo-400 flex-shrink-0"></span>
+                            <div>
+                                <h4 class="text-xl font-semibold text-white">True Collaboration</h4>
+                                <p class="text-sm text-gray-400">We embed our team with yours, fostering open communication and shared goals from ideation to deployment.</p>
+                            </div>
+                        </div>
+                        <!-- Value Card 3 -->
+                        <div class="flex items-start space-x-4 p-4 rounded-xl bg-gray-800/50 border border-gray-700 hover:border-indigo-500 transition duration-300">
+                            <span data-lucide="scale" class="w-8 h-8 text-indigo-400 flex-shrink-0"></span>
+                            <div>
+                                <h4 class="text-xl font-semibold text-white">Future Scalability</h4>
+                                <p class="text-sm text-gray-400">We design not just for today, but for the next decade of your growth, ensuring architectural flexibility.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2.5. Team Section -->
+        <section id="team" class="min-h-screen flex flex-col justify-center pt-20 border-t border-gray-800/50">
+            <div class="max-w-7xl mx-auto px-6 py-16 lg:py-24">
+                <div class="text-center mb-16 animate-on-scroll">
+                    <span class="text-indigo-500 font-semibold uppercase tracking-wider text-sm">The Visionaries</span>
+                    <h2 class="text-4xl sm:text-5xl font-bold mt-2">Meet Our Leadership.</h2>
+                </div>
+
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
+                    <!-- Member 1: CEO -->
+                    <div class="text-center p-6 rounded-xl bg-gray-800/50 shadow-lg hover:shadow-indigo-500/20 transition duration-500 animate-on-scroll" style="transition-delay: 0.1s;">
+<!-- Profile Picture Container -->
+<div class="mx-auto w-32 h-32 mb-4 overflow-hidden border-4 border-gray-700 rounded-full">
+<!-- IMPORTANT: Replace the 'src' attribute below with the public URL of your image. -->
+<!-- Local file paths (e.g., C:/...) will not work in a browser environment. -->
+<img
+src="assets/chair.jpg"
+alt="Md Ashikur Rahman Bijoy Profile"
+class="w-full h-full object-cover"
+onerror="this.onerror=null; this.src='https://www.google.com/search?q=https://placehold.co/128x128/6366f1/ffffff%3Ftext%3DError';"
+/>
+</div>
+<h4 class="text-xl font-bold text-white">Md Ashikur Rahman</h4>
+<p class="text-sm font-semibold text-indigo-400 mb-2">Chairman</p>
+<p class="text-xs text-gray-400">Drives strategic vision and market expansion, specializing in long-term technical innovation.</p>
+</div>
+
+                    <!-- Member 1: Chairman -->
+
+<div class="text-center p-6 rounded-xl bg-gray-800/50 shadow-lg hover:shadow-indigo-500/20 transition duration-500 animate-on-scroll" style="transition-delay: 0.1s;">
+<!-- Profile Picture Container -->
+<div class="mx-auto w-32 h-32 mb-4 overflow-hidden border-4 border-gray-700 rounded-full">
+<!-- IMPORTANT: Replace the 'src' attribute below with the public URL of your image. -->
+<!-- Local file paths (e.g., C:/...) will not work in a browser environment. -->
+<img
+src="assets/profile.jpg"
+alt="Md Shamim profile"
+class="w-full h-full object-cover"
+onerror="this.onerror=null; this.src='https://www.google.com/search?q=https://placehold.co/128x128/6366f1/ffffff%3Ftext%3DError';"
+/>
+</div>
+<h4 class="text-xl font-bold text-white">Md Shamim</h4>
+<p class="text-sm font-semibold text-indigo-400 mb-2">Chief Technology Officer</p>
+<p class="text-xs text-gray-400">Drives strategic vision and market expansion, specializing in long-term technical innovation.</p>
+</div>
+                    <!-- Member 2: CTO -->
+                    <div class="text-center p-6 rounded-xl bg-gray-800/50 shadow-lg hover:shadow-indigo-500/20 transition duration-500 animate-on-scroll" style="transition-delay: 0.2s;">
+                        <div class="mx-auto w-32 h-32 rounded-full bg-gradient-to-br from-cyan-600 to-gray-700 flex items-center justify-center mb-4 overflow-hidden border-4 border-gray-700">
+                            <span data-lucide="code-square" class="w-10 h-10 text-white/50"></span>
+                        </div>
+                        <h4 class="text-xl font-bold text-white">Maria Rodriguez</h4>
+                        <p class="text-sm font-semibold text-cyan-400 mb-2">Chief Operating Officer</p>
+                        <p class="text-xs text-gray-400">Oversees all architectural decisions and leads the R&D team in AI and scalable cloud systems.</p>
+                    </div>
+
+                    <!-- Member 3: Head of Product -->
+                    <div class="text-center p-6 rounded-xl bg-gray-800/50 shadow-lg hover:shadow-indigo-500/20 transition duration-500 animate-on-scroll" style="transition-delay: 0.3s;">
+                        <div class="mx-auto w-32 h-32 rounded-full bg-gradient-to-br from-pink-600 to-gray-700 flex items-center justify-center mb-4 overflow-hidden border-4 border-gray-700">
+                            <span data-lucide="trello" class="w-10 h-10 text-white/50"></span>
+                        </div>
+                        <h4 class="text-xl font-bold text-white">David Miller</h4>
+                        <p class="text-sm font-semibold text-pink-400 mb-2">Head of Product Strategy</p>
+                        <p class="text-xs text-gray-400">Focuses on user experience (UX) and translating complex client needs into intuitive product roadmaps.</p>
+                    </div>
+
+                    <!-- Member 4: Lead Designer -->
+                    <div class="text-center p-6 rounded-xl bg-gray-800/50 shadow-lg hover:shadow-indigo-500/20 transition duration-500 animate-on-scroll" style="transition-delay: 0.4s;">
+                        <div class="mx-auto w-32 h-32 rounded-full bg-gradient-to-br from-green-600 to-gray-700 flex items-center justify-center mb-4 overflow-hidden border-4 border-gray-700">
+                            <span data-lucide="layers-3" class="w-10 h-10 text-white/50"></span>
+                        </div>
+                        <h4 class="text-xl font-bold text-white">Sarah Lee</h4>
+                        <p class="text-sm font-semibold text-green-400 mb-2">Lead UI/UX Designer</p>
+                        <p class="text-xs text-gray-400">Ensures that every application we build is aesthetically beautiful and adheres to accessibility standards.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- 3. Services / Expertise Section -->
+        <section id="services" class="min-h-screen flex flex-col justify-center pt-20 border-t border-gray-800/50">
+            <div class="max-w-7xl mx-auto px-6 py-16 lg:py-24">
+                <div class="text-center mb-16">
+                    <span class="text-indigo-500 font-semibold uppercase tracking-wider text-sm">What We Do</span>
+                    <h2 class="text-4xl sm:text-5xl font-bold mt-2">Our Core Expertise.</h2>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-10">
+                    <!-- Service Card 1 -->
+                    <div class="p-8 rounded-2xl bg-gray-800/70 border border-gray-700 shadow-xl hover:shadow-indigo-500/20 transition duration-500 animate-on-scroll" style="transition-delay: 0.1s;">
+                        <span data-lucide="monitor" class="w-10 h-10 text-indigo-400 mb-4"></span>
+                        <h3 class="text-2xl font-bold text-white mb-3">Custom Web Development</h3>
+                        <p class="text-gray-400 mb-4">Crafting responsive, high-performance web applications using modern stacks like React, Vue, and TypeScript for robust front-end architecture.</p>
+                        <ul class="text-sm text-gray-500 list-disc ml-4 space-y-1">
+                            <li>Modern SPA/SSR development</li>
+                            <li>API Integration & Backend Services</li>
+                            <li>Headless CMS Solutions</li>
+                        </ul>
+                    </div>
+
+                    <!-- Service Card 2 -->
+                    <div class="p-8 rounded-2xl bg-gray-800/70 border border-gray-700 shadow-xl hover:shadow-indigo-500/20 transition duration-500 animate-on-scroll" style="transition-delay: 0.2s;">
+                        <span data-lucide="smartphone" class="w-10 h-10 text-indigo-400 mb-4"></span>
+                        <h3 class="text-2xl font-bold text-white mb-3">Native Mobile Applications</h3>
+                        <p class="text-gray-400 mb-4">Delivering exceptional user experiences on the go. We build lightning-fast, native-quality apps for iOS and Android platforms.</p>
+                        <ul class="text-sm text-gray-500 list-disc ml-4 space-y-1">
+                            <li>React Native & Flutter</li>
+                            <li>Performance Optimization</li>
+                            <li>App Store Deployment</li>
+                        </ul>
+                    </div>
+
+                    <!-- Service Card 3 -->
+                    <div class="p-8 rounded-2xl bg-gray-800/70 border border-gray-700 shadow-xl hover:shadow-indigo-500/20 transition duration-500 animate-on-scroll" style="transition-delay: 0.3s;">
+                        <span data-lucide="brain" class="w-10 h-10 text-indigo-400 mb-4"></span>
+                        <h3 class="text-2xl font-bold text-white mb-3">AI & Data Solutions</h3>
+                        <p class="text-gray-400 mb-4">Integrating intelligent systems to automate processes, personalize user experiences, and uncover actionable insights from your data.</p>
+                        <ul class="text-sm text-gray-500 list-disc ml-4 space-y-1">
+                            <li>Machine Learning Integration</li>
+                            <li>Predictive Analytics</li>
+                            <li>Natural Language Processing</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Portfolio / Case Studies Section -->
+        <section id="portfolio" class="min-h-screen flex flex-col justify-center pt-20 border-t border-gray-800/50">
+            <div class="max-w-7xl mx-auto px-6 py-16 lg:py-24">
+                <div class="text-center mb-16">
+                    <span class="text-indigo-500 font-semibold uppercase tracking-wider text-sm">Proven Success</span>
+                    <h2 class="text-4xl sm:text-5xl font-bold mt-2">Recent Case Studies.</h2>
+                </div>
+
+                <div class="space-y-16">
+                    <!-- Project 1 -->
+                    <div class="grid lg:grid-cols-2 gap-8 items-center animate-on-scroll" style="transition-delay: 0.1s;">
+                        <!-- Mock Image/Placeholder -->
+                        <div class="h-64 rounded-xl shadow-2xl bg-gradient-to-br from-indigo-800 to-gray-800 flex items-center justify-center">
+                            <span data-lucide="layout-grid" class="w-12 h-12 text-indigo-300/50"></span>
+                        </div>
+                        <!-- Description -->
+                        <div class="space-y-4">
+                            <h3 class="text-3xl font-bold text-white">The FinTech Compliance Hub</h3>
+                            <p class="text-lg text-gray-400">A secure, real-time dashboard for managing global financial regulations and automating reporting.</p>
+                            <div class="text-sm font-medium text-indigo-400 space-x-3">
+                                <span>#React</span>
+                                <span>#NodeJS</span>
+                                <span>#Security</span>
+                            </div>
+                            <a href="#" class="inline-flex items-center text-indigo-500 hover:text-indigo-400 font-medium transition duration-300">
+                                Read Full Study <span data-lucide="chevron-right" class="w-4 h-4 ml-1"></span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Project 2 -->
+                    <div class="grid lg:grid-cols-2 gap-8 items-center animate-on-scroll" style="transition-delay: 0.2s;">
+                        <!-- Mock Image/Placeholder -->
+                        <div class="h-64 rounded-xl shadow-2xl bg-gradient-to-br from-green-800 to-gray-800 flex items-center justify-center lg:order-2">
+                            <span data-lucide="rocket" class="w-12 h-12 text-green-300/50"></span>
+                        </div>
+                        <!-- Description -->
+                        <div class="space-y-4 lg:order-1">
+                            <h3 class="text-3xl font-bold text-white">E-commerce Supply Chain Optimizer</h3>
+                            <p class="text-lg text-gray-400">Mobile and web platform leveraging ML to predict inventory shortages and optimize shipping logistics.</p>
+                            <div class="text-sm font-medium text-green-400 space-x-3">
+                                <span>#Mobile</span>
+                                <span>#MachineLearning</span>
+                                <span>#Optimization</span>
+                            </div>
+                            <a href="#" class="inline-flex items-center text-indigo-500 hover:text-indigo-400 font-medium transition duration-300">
+                                Read Full Study <span data-lucide="chevron-right" class="w-4 h-4 ml-1"></span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Project 3 -->
+                    <div class="grid lg:grid-cols-2 gap-8 items-center animate-on-scroll" style="transition-delay: 0.3s;">
+                        <!-- Mock Image/Placeholder -->
+                        <div class="h-64 rounded-xl shadow-2xl bg-gradient-to-br from-yellow-800 to-gray-800 flex items-center justify-center">
+                            <span data-lucide="trending-up" class="w-12 h-12 text-yellow-300/50"></span>
+                        </div>
+                        <!-- Description -->
+                        <div class="space-y-4">
+                            <h3 class="text-3xl font-bold text-white">Global SaaS Onboarding Portal</h3>
+                            <p class="text-lg text-gray-400">Simplified, multi-lingual onboarding portal reducing churn by 20% through intuitive UX/UI design.</p>
+                            <div class="text-sm font-medium text-yellow-400 space-x-3">
+                                <span>#UXDesign</span>
+                                <span>#SaaS</span>
+                                <span>#VueJS</span>
+                            </div>
+                            <a href="#" class="inline-flex items-center text-indigo-500 hover:text-indigo-400 font-medium transition duration-300">
+                                Read Full Study <span data-lucide="chevron-right" class="w-4 h-4 ml-1"></span>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Contact / Footer Section -->
+        <section id="contact" class="min-h-screen flex flex-col justify-center pt-20 border-t border-gray-800/50">
+            <div class="max-w-7xl mx-auto px-6 py-16 lg:py-24 w-full">
+                <div class="text-center mb-16 animate-on-scroll">
+                    <span class="text-indigo-500 font-semibold uppercase tracking-wider text-sm">Let's Connect</span>
+                    <h2 class="text-4xl sm:text-5xl font-bold mt-2">Start Your Project.</h2>
+                </div>
+
+                <div class="max-w-xl mx-auto bg-gray-800/70 p-8 sm:p-10 rounded-2xl shadow-2xl animate-on-scroll" style="transition-delay: 0.1s;">
+                    <form onsubmit="event.preventDefault(); showMessage('Thank you for your message! We will be in touch shortly.', 'success'); this.reset();" class="space-y-6">
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-gray-300 mb-1">Name</label>
+                            <input type="text" id="name" name="name" required class="w-full px-4 py-3 rounded-lg bg-gray-900 border border-gray-700 text-white focus:ring-indigo-500 focus:border-indigo-500 transition duration-300" placeholder="Your Name">
+                        </div>
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-300 mb-1">Email</label>
+                            <input type="email" id="email" name="email" required class="w-full px-4 py-3 rounded-lg bg-gray-900 border border-gray-700 text-white focus:ring-indigo-500 focus:border-indigo-500 transition duration-300" placeholder="your.email@company.com">
+                        </div>
+                        <div>
+                            <label for="message" class="block text-sm font-medium text-gray-300 mb-1">Message</label>
+                            <textarea id="message" name="message" rows="4" required class="w-full px-4 py-3 rounded-lg bg-gray-900 border border-gray-700 text-white focus:ring-indigo-500 focus:border-indigo-500 transition duration-300" placeholder="Tell us about your project..."></textarea>
+                        </div>
+                        <button type="submit" class="w-full flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-xl shadow-md text-white bg-indigo-600 hover:bg-indigo-700 transition duration-300">
+                            Send Message
+                            <span data-lucide="mail" class="w-5 h-5 ml-2"></span>
+                        </button>
+                    </form>
+                    <!-- Message Box -->
+                    <div id="message-box" class="mt-4 p-3 rounded-lg text-center hidden"></div>
+                </div>
+            </div>
+
+            <!-- Footer Area -->
+            <footer class="bg-gray-900 border-t border-gray-800/50 mt-12 py-8">
+                <div class="max-w-7xl mx-auto px-6 sm:px-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-400 space-y-4 md:space-y-0">
+                    <p>&copy; <span id="current-year"></span> Asionix. All rights reserved.</p>
+                    <div class="flex space-x-6 items-center">
+                        <a href="#" class="hover:text-indigo-400 transition duration-300">Privacy Policy</a>
+                        <a href="#" class="hover:text-indigo-400 transition duration-300">Terms of Service</a>
+                        <div class="flex space-x-4">
+                            <!-- Social Icons (Using Lucide) -->
+                            <a href="#" class="hover:text-indigo-400 transition duration-300" aria-label="LinkedIn"><span data-lucide="linkedin" class="w-5 h-5"></span></a>
+                            <a href="#" class="hover:text-indigo-400 transition duration-300" aria-label="X (Twitter)"><span data-lucide="twitter" class="w-5 h-5"></span></a>
+                            <a href="#" class="hover:text-indigo-400 transition duration-300" aria-label="Github"><span data-lucide="github" class="w-5 h-5"></span></a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </section>
+
+    </main>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Set current year in footer
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // --- 1. Mobile Menu Toggle Logic ---
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Close menu when a link is clicked
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // --- 2. Custom Message Box (Replaces alert()) ---
+        function showMessage(text, type) {
+            const box = document.getElementById('message-box');
+            box.textContent = text;
+            box.classList.remove('hidden', 'bg-red-500', 'bg-green-500');
+
+            if (type === 'error') {
+                box.classList.add('bg-red-500', 'text-white');
+            } else {
+                box.classList.add('bg-green-500', 'text-white');
+            }
+
+            setTimeout(() => {
+                box.classList.add('hidden');
+            }, 3000);
+        }
+
+        // --- 3. Intersection Observer for Scroll Animations (AOS) ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.15 // Trigger when 15% of the element is visible
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        // Optionally, stop observing once it's visible
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            // Select all elements tagged for animation
+            document.querySelectorAll('.animate-on-scroll').forEach(element => {
+                observer.observe(element);
+            });
+        });
+
+        // --- 4. Mouse Trail Animation Logic (New) ---
+        const mouseTrail = document.getElementById('mouse-trail');
+        let targetX = 0;
+        let targetY = 0;
+        let currentX = 0;
+        let currentY = 0;
+        const speed = 0.15; // Controls the "lag" or smoothness of the trail
+
+        document.addEventListener('mousemove', (e) => {
+            // Set the target position to the current mouse position
+            targetX = e.clientX;
+            targetY = e.clientY;
+
+            // Make the trail visible on movement
+            if (mouseTrail.style.opacity === '0') {
+                mouseTrail.style.opacity = '1';
+            }
+        });
+
+        // Animation loop to smoothly move the trail element
+        function animateTrail() {
+            // Lerp (Linear interpolation) for smooth movement
+            currentX += (targetX - currentX) * speed;
+            currentY += (targetY - currentY) * speed;
+
+            // Apply the transformation
+            mouseTrail.style.transform = `translate(${currentX}px, ${currentY}px)`;
+
+            requestAnimationFrame(animateTrail);
+        }
+
+        // Start the animation loop
+        animateTrail();
+
+        // Optional: Change trail size/opacity when hovering over interactive elements
+        document.querySelectorAll('a, button').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                mouseTrail.style.width = '40px';
+                mouseTrail.style.height = '40px';
+                mouseTrail.style.opacity = '0.7';
+            });
+            el.addEventListener('mouseleave', () => {
+                mouseTrail.style.width = '20px';
+                mouseTrail.style.height = '20px';
+                // Reset opacity, ensuring it doesn't drop to 0 unless mouse leaves the body
+                mouseTrail.style.opacity = '1';
+            });
+        });
+
+        // Hide trail if mouse leaves the body
+        document.body.addEventListener('mouseleave', () => {
+            mouseTrail.style.opacity = '0';
+        });
+
+    </script>
+</body>
+</html>
