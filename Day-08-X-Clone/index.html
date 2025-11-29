@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>X • Shamim</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .tweet-hover:hover { background-color: rgba(255,255,255,0.03); }
+    .like-animation { animation: like 0.6s ease; }
+    @keyframes like { 0%,100% { transform: scale(1); } 50% { transform: scale(1.4); } }
+  </style>
+</head>
+<body class="bg-black text-white min-h-screen" x-data="xApp()">
+
+  <!-- Header -->
+  <header class="fixed top-0 left-0 right-0 bg-black/80 backdrop-blur-md border-b border-gray-800 z-50">
+    <div class="max-w-xl mx-auto flex items-center justify-between px-4 py-3">
+      <img src="assets/profile.jpg" class="w-10 h-10 rounded-full border-2 border-white">
+      <h1 class="text-xl font-bold">Home</h1>
+      <i class="fas fa-sparkles text-xl text-blue-400"></i>
+    </div>
+  </header>
+
+  <!-- Main Feed -->
+  <main class="pt-16 pb-20 max-w-xl mx-auto border-x border-gray-800">
+    
+    <!-- Tweet Composer -->
+    <div class="border-b border-gray-800 p-4">
+      <div class="flex gap-4">
+        <img src="assets/profile.jpg" class="w-12 h-12 rounded-full">
+        <div class="flex-1">
+          <textarea x-model="newTweet" @keydown.enter.prevent="postTweet()" 
+                    placeholder="What's happening?" 
+                    class="w-full bg-transparent text-xl placeholder-gray-500 outline-none resize-none"></textarea>
+          <div class="flex justify-between items-center mt-4">
+            <div class="flex gap-6 text-blue-400 text-xl">
+              <i class="far fa-image cursor-pointer hover:bg-gray-900 rounded-full p-2"></i>
+              <i class="far fa-chart-bar cursor-pointer hover:bg-gray-900 rounded-full p-2"></i>
+              <i class="far fa-smile cursor-pointer hover:bg-gray-900 rounded-full p-2"></i>
+            </div>
+            <button @click="postTweet()" 
+                    :disabled="!newTweet.trim()"
+                    class="bg-blue-500 hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed px-6 py-2 rounded-full font-bold">
+              Post
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tweets Feed -->
+    <div>
+      <template x-for="tweet in tweets" :key="tweet.id">
+        <div class="border-b border-gray-800 p-4 tweet-hover cursor-pointer">
+          <div class="flex gap-4">
+            <img :src="tweet.avatar" class="w-12 h-12 rounded-full">
+            <div class="flex-1">
+              <div class="flex items-center gap-1">
+                <span class="font-bold" x-text="tweet.name"></span>
+                <i x-show="tweet.verified" class="fas fa-check-circle text-blue-500 text-sm"></i>
+                <span class="text-gray-500" x-text="'@' + tweet.handle"></span>
+                <span class="text-gray-500">·</span>
+                <span class="text-gray-500" x-text="tweet.time"></span>
+              </div>
+              <p class="mt-2" x-text="tweet.text"></p>
+              <img v-if="tweet.image" :src="tweet.image" class="mt-4 rounded-2xl max-w-full">
+
+              <!-- Actions -->
+              <div class="flex justify-between mt-4 text-gray-500 max-w-md">
+                <button class="flex items-center gap-2 hover:text-blue-500">
+                  <i class="far fa-comment"></i> <span x-text="tweet.replies"></span>
+                </button>
+                <button @click="retweet(tweet.id)" class="flex items-center gap-2" 
+                        :class="tweet.retweeted ? 'text-green-500' : 'hover:text-green-500'">
+                  <i :class="tweet.retweeted ? 'fas fa-retweet' : 'far fa-retweet'"></i>
+                  <span x-text="tweet.retweets"></span>
+                </button>
+                <button @click="like(tweet.id)" class="flex items-center gap-2" 
+                        :class="tweet.liked ? 'text-red-500' : 'hover:text-red-500'">
+                  <i :class="tweet.liked ? 'fas fa-heart like-animation' : 'far fa-heart'"></i>
+                  <span x-text="tweet.likes"></span>
+                </button>
+                <button class="hover:text-blue-500">
+                  <i class="far fa-bookmark"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
+    </div>
+  </main>
+
+  <!-- Grok Button (Floating) -->
+  <button @click="askGrok()" 
+          class="fixed bottom-20 right-6 bg-gradient-to-r from-purple-600 to-blue-600 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center text-2xl hover:scale-110 transition z-40">
+    <img src="assets/grok.jpg" class="w-8 h-8" alt="Grok">
+  </button>
+
+  <!-- Bottom Navigation (Mobile Only) -->
+  <div class="fixed inset-x-0 bottom-0 bg-black border-t border-gray-800 z-50 md:hidden">
+    <div class="max-w-xl mx-auto px-6 py-3 flex justify-around text-2xl">
+      <i class="fas fa-home text-blue-500"></i>
+      <i class="fas fa-search text-gray-500"></i>
+      <i class="fas fa-bell text-gray-500"></i>
+      <i class="far fa-envelope text-gray-500"></i>
+    </div>
+  </div>
+
+  <script>
+    function xApp() {
+      return {
+        newTweet: '',
+        tweets: [
+          { id: 1, name: "Shamim", handle: "shamimcodes", avatar: "assets/profile.jpg", text: "Day 8 of 90 → Just dropped X Clone with real-time tweets 🔥", time: "1m", verified: true, likes: 89, retweets: 12, replies: 5, liked: false, retweeted: false },
+          { id: 2, name: "Elon Musk", handle: "elonmusk", avatar: "assets/elon.jpg", text: "Grok is getting smarter every day", image: "assets/posts/post1.jpg", time: "2h", verified: true, likes: 89210, retweets: 12100, replies: 3400, liked: true, retweeted: false },
+          { id: 3, name: "Grok", handle: "grok", avatar: "assets/grok.svg", text: "I'm here to help you understand the universe", time: "5h", verified: true, likes: 45200, retweets: 8900, replies: 2100, liked: false, retweeted: true }
+        ],
+
+        postTweet() {
+          if (!this.newTweet.trim()) return;
+          this.tweets.unshift({
+            id: Date.now(),
+            name: "Shamim",
+            handle: "shamimcodes",
+            avatar: "assets/profile.jpg",
+            text: this.newTweet,
+            time: "now",
+            verified: true,
+            likes: 0,
+            retweets: 0,
+            replies: 0,
+            liked: false,
+            retweeted: false
+          });
+          this.newTweet = '';
+        },
+
+        like(id) {
+          const t = this.tweets.find(t => t.id === id);
+          if (t.liked) { t.likes--; t.liked = false; }
+          else { t.likes++; t.liked = true; }
+        },
+
+        retweet(id) {
+          const t = this.tweets.find(t => t.id === id);
+          if (t.retweeted) { t.retweets--; t.retweeted = false; }
+          else { t.retweets++; t.retweeted = true; }
+        },
+
+        askGrok() {
+          alert("Grok: Ask me anything about the universe");
+        }
+      }
+    }
+  </script>
+</body>
+</html>
