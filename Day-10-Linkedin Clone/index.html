@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LinkedIn • Md Shamim</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .post-hover:hover { background-color: #f3f2ef; }
+    .connection-hover:hover { background-color: #f0f8ff; }
+  </style>
+</head>
+<body class="bg-gray-100" x-data="linkedin()">
+
+  <!-- Header -->
+  <header class="fixed top-0 left-0 right-0 bg-white border-b border-gray-300 z-50">
+    <div class="max-w-7xl mx-auto flex items-center justify-between px-4 py-2">
+      <!-- Logo + Search -->
+      <div class="flex items-center gap-4">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_Logo.svg" class="h-8">
+        <div class="hidden md:flex items-center bg-gray-100 rounded-full px-4 py-2 w-72">
+          <i class="fas fa-search text-gray-500"></i>
+          <input type="text" placeholder="Search" class="bg-transparent outline-none ml-3 w-full">
+        </div>
+      </div>
+
+      <!-- Nav Icons -->
+      <div class="flex items-center gap-6 text-gray-600">
+        <div class="text-center cursor-pointer">
+          <i class="fas fa-home text-2xl"></i>
+          <p class="text-xs">Home</p>
+        </div>
+        <div class="text-center cursor-pointer">
+          <i class="fas fa-users text-2xl"></i>
+          <p class="text-xs">My Network</p>
+          <span class="absolute top-2 right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center" x-show="pendingRequests > 0" x-text="pendingRequests"></span>
+        </div>
+        <div class="text-center cursor-pointer">
+          <i class="fas fa-briefcase text-2xl"></i>
+          <p class="text-xs">Jobs</p>
+        </div>
+        <div class="text-center cursor-pointer">
+          <i class="fas fa-comment-dots text-2xl"></i>
+          <p class="text-xs">Messaging</p>
+        </div>
+        <div class="text-center cursor-pointer">
+          <i class="fas fa-bell text-2xl"></i>
+          <p class="text-xs">Notifications</p>
+        </div>
+        <img src="assets/profile.jpg" class="w-8 h-8 rounded-full cursor-pointer">
+      </div>
+    </div>
+  </header>
+
+  <div class="pt-16 flex max-w-7xl mx-auto">
+
+    <!-- Left Sidebar -->
+    <aside class="w-64 bg-white border-r border-gray-300 p-4 hidden lg:block">
+      <div class="bg-gray-50 rounded-lg p-4 text-center">
+        <img src="assets/cover.jpg" class="w-full h-20 rounded-t-lg object-cover">
+        <img src="assets/profile.jpg" class="w-20 h-20 rounded-full mx-auto -mt-10 border-4 border-white">
+        <h3 class="font-bold mt-2">Md Shamim</h3>
+        <p class="text-sm text-gray-600">Full-Stack Developer | Building the Future</p>
+        <div class="mt-4 text-left text-sm">
+          <div class="flex justify-between"><span>Connections</span><strong>1,240</strong></div>
+          <div class="flex justify-between"><span>Profile views</span><strong>892</strong></div>
+        </div>
+        <button class="w-full mt-4 bg-blue-600 text-white py-2 rounded-full font-semibold hover:bg-blue-700">
+          Premium - Try Free
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Feed -->
+    <main class="flex-1 max-w-2xl">
+
+      <!-- Post Composer -->
+      <div class="bg-white rounded-lg shadow p-4 m-4">
+        <div class="flex gap-4">
+          <img src="assets/profile.jpg" class="w-12 h-12 rounded-full">
+          <button @click="showPostModal = true" class="flex-1 text-left bg-gray-100 rounded-full px-6 py-3 text-gray-500 hover:bg-gray-200 transition">
+            Start a post
+          </button>
+        </div>
+        <div class="flex justify-around mt-4 text-gray-600">
+          <button class="flex items-center gap-2 hover:bg-gray-100 px-4 py-2 rounded"><i class="fas fa-image text-blue-600"></i> Photo</button>
+          <button class="flex items-center gap-2 hover:bg-gray-100 px-4 py-2 rounded"><i class="fas fa-video text-green-600"></i> Video</button>
+          <button class="flex items-center gap-2 hover:bg-gray-100 px-4 py-2 rounded"><i class="fas fa-file text-yellow-600"></i> Document</button>
+        </div>
+      </div>
+
+      <!-- Feed Posts -->
+      <div class="space-y-4 m-4">
+        <template x-for="post in posts" :key="post.id">
+          <div class="bg-white rounded-lg shadow post-hover">
+            <div class="p-4">
+              <div class="flex items-start gap-3">
+                <img :src="post.avatar" class="w-12 h-12 rounded-full">
+                <div class="flex-1">
+                  <div class="flex items-center gap-1">
+                    <h4 class="font-semibold" x-text="post.name"></h4>
+                    <i x-show="post.verified" class="fas fa-check-circle text-blue-500"></i>
+                  </div>
+                  <p class="text-sm text-gray-600" x-text="post.title"></p>
+                  <p class="text-xs text-gray-500" x-text="post.time"></p>
+                </div>
+                <i class="fas fa-ellipsis-h text-gray-500 cursor-pointer"></i>
+              </div>
+              <p class="mt-4" x-text="post.content"></p>
+              <img v-if="post.image" :src="post.image" class="mt-4 rounded-lg w-full">
+              
+              <div class="flex justify-between mt-4 text-gray-600">
+                <button @click="likePost(post.id)" class="flex items-center gap-2 hover:text-blue-600">
+                  <i :class="post.liked ? 'fas fa-thumbs-up text-blue-600' : 'far fa-thumbs-up'"></i>
+                  <span x-text="post.likes"></span>
+                </button>
+                <button class="flex items-center gap-2 hover:text-gray-800">
+                  <i class="far fa-comment"></i> <span x-text="post.comments"></span>
+                </button>
+                <button class="flex items-center gap-2 hover:text-green-600">
+                  <i class="fas fa-share"></i> Repost
+                </button>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+    </main>
+
+    <!-- Right Sidebar -->
+    <aside class="w-80 bg-white border-l border-gray-300 p-4 hidden xl:block">
+      <h3 class="font-bold mb-4">People you may know</h3>
+      <template x-for="person in suggestions" :key="person.id">
+        <div class="flex items-center justify-between p-3 connection-hover rounded-lg">
+          <div class="flex items-center gap-3">
+            <img :src="person.avatar" class="w-12 h-12 rounded-full">
+            <div>
+              <p class="font-semibold" x-text="person.name"></p>
+              <p class="text-xs text-gray-600" x-text="person.title"></p>
+            </div>
+          </div>
+          <button @click="sendRequest(person.id)" 
+                  :class="person.requested ? 'text-gray-500' : 'text-blue-600 hover:bg-blue-50'"
+                  class="px-4 py-1 rounded-full border border-gray-400 font-medium">
+            <span x-show="!person.requested">Connect</span>
+            <span x-show="person.requested">Pending</span>
+          </button>
+        </div>
+      </template>
+    </aside>
+  </div>
+
+  <!-- Post Modal -->
+  <div x-show="showPostModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center" @click="showPostModal = false">
+    <div @click.stop class="bg-white rounded-lg w-full max-w-xl mx-4">
+      <div class="flex items-center justify-between p-4 border-b">
+        <h3 class="text-xl font-bold">Create a post</h3>
+        <button @click="showPostModal = false" class="text-2xl">&times;</button>
+      </div>
+      <div class="p-6">
+        <div class="flex gap-4">
+          <img src="assets/profile.jpg" class="w-12 h-12 rounded-full">
+          <textarea x-model="newPost" placeholder="What do you want to talk about?" class="w-full p-3 text-lg outline-none resize-none"></textarea>
+        </div>
+        <div class="flex justify-between items-center mt-6">
+          <div class="flex gap-4 text-2xl text-gray-600">
+            <i class="far fa-image cursor-pointer hover:text-blue-600"></i>
+            <i class="far fa-video cursor-pointer hover:text-green-600"></i>
+          </div>
+          <button @click="createPost()" 
+                  :disabled="!newPost.trim()"
+                  class="px-6 py-2 bg-blue-600 text-white rounded-full font-semibold disabled:opacity-50">
+            Post
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function linkedin() {
+      return {
+        showPostModal: false,
+        newPost: '',
+        pendingRequests: 3,
+        posts: [
+          { id: 1, name: "Md Shamim", avatar: "assets/profile.jpg", title: "Full-Stack Developer", content: "Day 9 of 90 → Just dropped LinkedIn Clone with real-time feed", time: "Just now", likes: 124, comments: 23, image: "assets/posts/post1.jpg", liked: false, verified: true },
+          { id: 2, name: "Elon Musk", avatar: "https://via.placeholder.com/48", title: "CEO at Tesla, SpaceX", content: "The future is multiplanetary", time: "2h", likes: 89210, comments: 4567, liked: true, verified: true }
+        ],
+        suggestions: [
+          { id: 1, name: "Satya Nadella", avatar: "https://via.placeholder.com/48", title: "CEO at Microsoft", requested: false },
+          { id: 2, name: "Sundar Pichai", avatar: "https://via.placeholder.com/48", title: "CEO at Google", requested: false }
+        ],
+
+        createPost() {
+          if (!this.newPost.trim()) return;
+          this.posts.unshift({
+            id: Date.now(),
+            name: "Md Shamim",
+            avatar: "assets/profile.jpg",
+            title: "Full-Stack Developer",
+            content: this.newPost,
+            time: "Just now",
+            likes: 0,
+            comments: 0,
+            liked: false,
+            verified: true
+          });
+          this.newPost = '';
+          this.showPostModal = false;
+        },
+
+        likePost(id) {
+          const post = this.posts.find(p => p.id === id);
+          if (post.liked) { post.likes--; post.liked = false; }
+          else { post.likes++; post.liked = true; }
+        },
+
+        sendRequest(id) {
+          const person = this.suggestions.find(p => p.id === id);
+          person.requested = true;
+          this.pendingRequests++;
+        }
+      }
+    }
+  </script>
+</body>
+</html>
