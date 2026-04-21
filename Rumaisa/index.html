@@ -459,6 +459,21 @@ footer {
 .reveal.visible { opacity: 1; transform: none; }
 
 /* ─── Responsive ─── */
+@media (max-width: 600px) {
+  .modal-inner { padding: 30px 20px; }
+  .bday-icon { font-size: 40px; margin-bottom: 10px; }
+  .modal-inner h1 { font-size: 38px; }
+  .modal-inner p { font-size: 14px; line-height: 1.6; margin-bottom: 25px; }
+  .enter-btn { width: 100%; padding: 15px; letter-spacing: 1px; }
+}
+
+/* ─── Navigation (FIXED FOR MOBILE) ─── */
+@media (max-width: 600px) {
+  .nav-links { display: none; } /* Hide links on mobile to save space */
+  .nav-logo { font-size: 24px; }
+  nav { padding: 15px 20px; }
+}
+
 @media (max-width: 900px) {
   #hero { grid-template-columns: 1fr; }
   .hero-right { height: 60vw; }
